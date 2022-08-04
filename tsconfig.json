@@ -1,27 +1,13 @@
 {
+  "extends": "../../tsconfig-tsec.json",
   "compilerOptions": {
-    "strict": false,
-    "noEmit": true,
-    "allowJs": true,
-    "jsx": "react",
+    "strict": true,
     "module": "esnext",
-    "target": "ESNext",
-    "skipLibCheck": true,
+    "target": "ES2017",
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-      "next-test-utils": ["test/lib/next-test-utils"],
-      "amp-test-utils": ["test/lib/amp-test-utils"],
-      "next-webdriver": ["test/lib/next-webdriver"],
-      "e2e-utils": ["test/lib/e2e-utils"]
-    }
+    "jsx": "react",
+    "stripInternal": true
   },
-  "include": [
-    "test/jest.d.ts",
-    "test/**/*.test.ts",
-    "test/**/*.test.tsx",
-    "test/**/test/*",
-    "packages/next/types/webpack.d.ts"
-  ]
+  "exclude": ["dist", "./*.d.ts", "future/*.d.ts", "image-types/global.d.ts"]
 }
