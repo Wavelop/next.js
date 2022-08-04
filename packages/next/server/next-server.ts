@@ -197,7 +197,7 @@ export default class NextNodeServer extends BaseServer {
   protected generateImageRoutes(): Route[] {
     return [
       {
-        match: getPathMatch('/_next/image'),
+        match: getPathMatch('/_next/image/:name'),
         type: 'route',
         name: '_next/image catchall',
         fn: async (req, res, _params, parsedUrl) => {

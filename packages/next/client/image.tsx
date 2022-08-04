@@ -43,6 +43,7 @@ export type ImageLoaderProps = {
   src: string
   width: number
   quality?: number
+  customPathName?: string
 }
 
 // Do not export - this is an internal type only
@@ -141,6 +142,7 @@ export type ImageProps = Omit<
   objectFit?: ImgElementStyle['objectFit']
   objectPosition?: ImgElementStyle['objectPosition']
   onLoadingComplete?: OnLoadingComplete
+  customPathName?: string
 }
 
 type ImageElementProps = Omit<ImageProps, 'src' | 'loader'> & {
@@ -156,6 +158,7 @@ type ImageElementProps = Omit<ImageProps, 'src' | 'loader'> & {
   loading: LoadingValue
   config: ImageConfig
   unoptimized: boolean
+  customPathName?: string
   loader: ImageLoaderWithConfig
   placeholder: PlaceholderValue
   onLoadingCompleteRef: React.MutableRefObject<OnLoadingComplete | undefined>
@@ -222,6 +225,7 @@ type GenImgAttrsData = {
   width?: number
   quality?: number
   sizes?: string
+  customPathName?: string
 }
 
 type GenImgAttrsResult = {
@@ -238,6 +242,7 @@ function generateImgAttrs({
   width,
   quality,
   sizes,
+  customPathName,
   loader,
 }: GenImgAttrsData): GenImgAttrsResult {
   if (unoptimized) {
@@ -252,7 +257,7 @@ function generateImgAttrs({
     srcSet: widths
       .map(
         (w, i) =>
-          `${loader({ config, src, quality, width: w })} ${
+          `${loader({ config, src, quality, width: w, customPathName })} ${
             kind === 'w' ? w : i + 1
           }${kind}`
       )
@@ -264,7 +269,7 @@ function generateImgAttrs({
     // updated by React. That causes multiple unnecessary requests if `srcSet`
     // and `sizes` are defined.
     // This bug cannot be reproduced in Chrome or Firefox.
-    src: loader({ config, src, quality, width: widths[last] }),
+    src: loader({ config, src, quality, width: widths[last], customPathName }),
   }
 }
 
@@ -367,6 +372,7 @@ export default function Image({
   onLoadingComplete,
   placeholder = 'empty',
   blurDataURL,
+  customPathName,
   ...all
 }: ImageProps) {
   const configContext = useContext(ImageConfigContext)
@@ -723,6 +729,7 @@ export default function Image({
       width: widthInt,
       quality: qualityInt,
       sizes,
+      customPathName,
       loader,
     })
   }
@@ -790,6 +797,7 @@ export default function Image({
     setIntersection,
     isVisible,
     noscriptSizes: sizes,
+    customPathName,
     ...rest,
   }
   return (
@@ -861,6 +869,7 @@ const ImageElement = ({
   srcString,
   config,
   unoptimized,
+  customPathName,
   loader,
   onLoadingCompleteRef,
   setBlurComplete,
@@ -945,6 +954,7 @@ const ImageElement = ({
               width: widthInt,
               quality: qualityInt,
               sizes: noscriptSizes,
+              customPathName,
               loader,
             })}
             decoding="async"
@@ -1017,6 +1027,7 @@ function defaultLoader({
   src,
   width,
   quality,
+  customPathName,
 }: ImageLoaderPropsWithConfig): string {
   if (process.env.NODE_ENV !== 'production') {
     const missingValues = []
@@ -1074,7 +1085,30 @@ function defaultLoader({
     return src
   }
 
-  return `${normalizePathTrailingSlash(config.path)}?url=${encodeURIComponent(
-    src
-  )}&w=${width}&q=${quality || 75}`
+  const toKebabCase = (string: string): string | null => {
+    let kebabCaseString = null
+    if (string) {
+      kebabCaseString = string.match(
+        /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g
+      )
+    }
+    return (
+      kebabCaseString && kebabCaseString.map((x) => x.toLowerCase()).join('-')
+    )
+  }
+
+  if (!customPathName) {
+    const urlSplitted = src.split('/')
+    const urlSplittedLength = urlSplitted?.length ? urlSplitted?.length - 1 : 0
+
+    const imageName = urlSplitted[urlSplittedLength]
+
+    return `${normalizePathTrailingSlash(config.path)}/${encodeURIComponent(
+      toKebabCase(imageName) || 'fallback'
+    )}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`
+  } else {
+    return `${normalizePathTrailingSlash(config.path)}/${encodeURIComponent(
+      toKebabCase(customPathName) || 'fallback'
+    )}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`
+  }
 }

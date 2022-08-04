@@ -147,7 +147,7 @@ export async function createOriginalStackFrame({
     ? findOriginalSourcePositionAndContentFromCompilation(
         modulePath,
         moduleNotFound,
-        compilation
+        compilation as any
       )
     : await findOriginalSourcePositionAndContent(source, {
         line,
@@ -282,7 +282,7 @@ function getOverlayMiddleware(options: OverlayMiddlewareOptions) {
         source = await getSourceById(
           frame.file.startsWith('file:'),
           moduleId,
-          compilation
+          compilation as any
         )
       } catch (err) {
         console.log('Failed to get source map:', err)
