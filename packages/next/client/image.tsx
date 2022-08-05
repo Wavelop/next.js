@@ -1087,28 +1087,45 @@ function defaultLoader({
 
   const toKebabCase = (string: string): string | null => {
     let kebabCaseString = null
-    if (string) {
-      kebabCaseString = string.match(
+
+    const stringSplittedAsArray = string.split('.');
+
+    const stringSplittedAsArrayCopy = [...stringSplittedAsArray]
+
+    let extension; 
+
+    if(stringSplittedAsArrayCopy.length > 1) {
+      extension = stringSplittedAsArrayCopy.pop();
+    }
+
+    const stringWithoutExtension = stringSplittedAsArrayCopy.join(' ');
+
+    if (stringWithoutExtension) {
+      kebabCaseString = stringWithoutExtension.match(
         /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g
       )
     }
+
+    const stringTKebab = kebabCaseString && kebabCaseString.map((x) => x.toLowerCase()).join('-');
+
     return (
-      kebabCaseString && kebabCaseString.map((x) => x.toLowerCase()).join('-')
+      stringSplittedAsArray.length > 1 && extension ? `${stringTKebab}.${extension}` : stringTKebab
     )
   }
+
 
   if (!customPathName) {
     const urlSplitted = src.split('/')
     const urlSplittedLength = urlSplitted?.length ? urlSplitted?.length - 1 : 0
 
-    const imageName = urlSplitted[urlSplittedLength]
+    const imageName = urlSplitted[urlSplittedLength];
 
     return `${normalizePathTrailingSlash(config.path)}/${encodeURIComponent(
-      toKebabCase(imageName) || 'fallback'
+      toKebabCase(imageName.toLocaleLowerCase()) || 'fallback'
     )}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`
   } else {
     return `${normalizePathTrailingSlash(config.path)}/${encodeURIComponent(
-      toKebabCase(customPathName) || 'fallback'
+      toKebabCase(customPathName.toLocaleLowerCase()) || 'fallback'
     )}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`
   }
 }
