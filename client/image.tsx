@@ -1113,6 +1113,11 @@ function defaultLoader({
     )
   }
 
+  let normalizedTrailingSlash = normalizePathTrailingSlash(config.path);
+
+  if(!normalizedTrailingSlash.endsWith('/')) {
+    normalizedTrailingSlash = `${normalizedTrailingSlash}/`;
+  }
 
   if (!customPathName) {
     const urlSplitted = src.split('/')
@@ -1120,11 +1125,11 @@ function defaultLoader({
 
     const imageName = urlSplitted[urlSplittedLength];
 
-    return `${normalizePathTrailingSlash(config.path)}/${encodeURIComponent(
+    return `${normalizedTrailingSlash}${encodeURIComponent(
       toKebabCase(imageName.toLocaleLowerCase()) || 'fallback'
     )}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`
   } else {
-    return `${normalizePathTrailingSlash(config.path)}/${encodeURIComponent(
+    return `${normalizedTrailingSlash}${encodeURIComponent(
       toKebabCase(customPathName.toLocaleLowerCase()) || 'fallback'
     )}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`
   }

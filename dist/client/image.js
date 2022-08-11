@@ -852,13 +852,17 @@ function defaultLoader({ config , src , width , quality , customPathName  }) {
         const stringTKebab = kebabCaseString && kebabCaseString.map((x)=>x.toLowerCase()).join('-');
         return stringSplittedAsArray.length > 1 && extension ? `${stringTKebab}.${extension}` : stringTKebab;
     };
+    let normalizedTrailingSlash = (0, _normalizeTrailingSlash).normalizePathTrailingSlash(config.path);
+    if (!normalizedTrailingSlash.endsWith('/')) {
+        normalizedTrailingSlash = `${normalizedTrailingSlash}/`;
+    }
     if (!customPathName) {
         const urlSplitted = src.split('/');
         const urlSplittedLength = (urlSplitted == null ? void 0 : urlSplitted.length) ? (urlSplitted == null ? void 0 : urlSplitted.length) - 1 : 0;
         const imageName = urlSplitted[urlSplittedLength];
-        return `${(0, _normalizeTrailingSlash).normalizePathTrailingSlash(config.path)}/${encodeURIComponent(toKebabCase(imageName.toLocaleLowerCase()) || 'fallback')}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`;
+        return `${normalizedTrailingSlash}${encodeURIComponent(toKebabCase(imageName.toLocaleLowerCase()) || 'fallback')}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`;
     } else {
-        return `${(0, _normalizeTrailingSlash).normalizePathTrailingSlash(config.path)}/${encodeURIComponent(toKebabCase(customPathName.toLocaleLowerCase()) || 'fallback')}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`;
+        return `${normalizedTrailingSlash}${encodeURIComponent(toKebabCase(customPathName.toLocaleLowerCase()) || 'fallback')}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`;
     }
 }
 
