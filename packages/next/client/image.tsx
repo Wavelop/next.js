@@ -1088,17 +1088,17 @@ function defaultLoader({
   const toKebabCase = (string: string): string | null => {
     let kebabCaseString = null
 
-    const stringSplittedAsArray = string.split('.');
+    const stringSplittedAsArray = string.split('.')
 
     const stringSplittedAsArrayCopy = [...stringSplittedAsArray]
 
-    let extension; 
+    let extension
 
-    if(stringSplittedAsArrayCopy.length > 1) {
-      extension = stringSplittedAsArrayCopy.pop();
+    if (stringSplittedAsArrayCopy.length > 1) {
+      extension = stringSplittedAsArrayCopy.pop()
     }
 
-    const stringWithoutExtension = stringSplittedAsArrayCopy.join(' ');
+    const stringWithoutExtension = stringSplittedAsArrayCopy.join(' ')
 
     if (stringWithoutExtension) {
       kebabCaseString = stringWithoutExtension.match(
@@ -1106,25 +1106,31 @@ function defaultLoader({
       )
     }
 
-    const stringTKebab = kebabCaseString && kebabCaseString.map((x) => x.toLowerCase()).join('-');
+    const stringTKebab =
+      kebabCaseString && kebabCaseString.map((x) => x.toLowerCase()).join('-')
 
-    return (
-      stringSplittedAsArray.length > 1 && extension ? `${stringTKebab}.${extension}` : stringTKebab
-    )
+    return stringSplittedAsArray.length > 1 && extension
+      ? `${stringTKebab}.${extension}`
+      : stringTKebab
   }
 
+  let normalizedTrailingSlash = normalizePathTrailingSlash(config.path)
+
+  if (!normalizedTrailingSlash.endsWith('/')) {
+    normalizedTrailingSlash = `${normalizedTrailingSlash}/`
+  }
 
   if (!customPathName) {
     const urlSplitted = src.split('/')
     const urlSplittedLength = urlSplitted?.length ? urlSplitted?.length - 1 : 0
 
-    const imageName = urlSplitted[urlSplittedLength];
+    const imageName = urlSplitted[urlSplittedLength]
 
-    return `${normalizePathTrailingSlash(config.path)}/${encodeURIComponent(
+    return `${normalizedTrailingSlash}${encodeURIComponent(
       toKebabCase(imageName.toLocaleLowerCase()) || 'fallback'
     )}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`
   } else {
-    return `${normalizePathTrailingSlash(config.path)}/${encodeURIComponent(
+    return `${normalizedTrailingSlash}${encodeURIComponent(
       toKebabCase(customPathName.toLocaleLowerCase()) || 'fallback'
     )}?url=${encodeURIComponent(src)}&w=${width}&q=${quality || 75}`
   }
