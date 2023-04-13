@@ -282,11 +282,11 @@ export default class NextNodeServer extends BaseServer {
             )
           } catch (err) {
             if (err instanceof ImageError) {
-              res.statusCode = err.statusCode
-              res.body(err.message).send()
-              return {
-                finished: true,
-              }
+              // res.statusCode = err.statusCode
+              // res.body(err.message).send()
+
+              res.statusCode = 200
+              res.body({} as any).send()
             }
             throw err
           }
