@@ -177,15 +177,7 @@ class NextNodeServer extends _baseServer.default {
                             // res.statusCode = err.statusCode
                             // res.body(err.message).send()
                             res.statusCode = 200;
-                            return {
-                                value: {
-                                    kind: "IMAGE",
-                                    buffer: undefined,
-                                    etag: "",
-                                    extension: ""
-                                },
-                                revalidate: 0
-                            };
+                            res.body({}).send();
                         }
                         throw err;
                     }
