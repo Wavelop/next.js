@@ -174,10 +174,17 @@ class NextNodeServer extends _baseServer.default {
                         sendResponse(req.originalRequest, res.originalResponse, paramsResult.href, cacheEntry.value.extension, cacheEntry.value.buffer, paramsResult.isStatic, cacheEntry.isMiss ? "MISS" : cacheEntry.isStale ? "STALE" : "HIT", imagesConfig.contentSecurityPolicy, cacheEntry.revalidate || 0, Boolean(this.renderOpts.dev));
                     } catch (err) {
                         if (err instanceof ImageError) {
-                            res.statusCode = err.statusCode;
-                            res.body(err.message).send();
+                            // res.statusCode = err.statusCode
+                            // res.body(err.message).send()
+                            res.statusCode = 200;
                             return {
-                                finished: true
+                                value: {
+                                    kind: "IMAGE",
+                                    buffer: undefined,
+                                    etag: "",
+                                    extension: ""
+                                },
+                                revalidate: 0
                             };
                         }
                         throw err;
